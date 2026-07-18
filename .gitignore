@@ -1,0 +1,6 @@
+venv
+node_modules
+img
+__pycache__
+.env
+.codebuddy
