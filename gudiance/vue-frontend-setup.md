@@ -119,7 +119,6 @@ export default router
 ```js
 const BASE = '/api'
 
-// 通用请求函数
 async function request(url, options = {}) {
   const token = localStorage.getItem('token')
   const headers = {
@@ -131,7 +130,6 @@ async function request(url, options = {}) {
   const res = await fetch(`${BASE}${url}`, { ...options, headers })
   const data = await res.json()
 
-  // 如果后端返回 401（token 过期），清除登录状态并跳转
   if (res.status === 401) {
     localStorage.removeItem('token')
     localStorage.removeItem('userName')
@@ -142,7 +140,6 @@ async function request(url, options = {}) {
   return data
 }
 
-// ========== 注册 / 登录 ==========
 export function register(body) {
   return request('/register', { method: 'POST', body: JSON.stringify(body) })
 }
@@ -151,7 +148,6 @@ export function login(body) {
   return request('/login', { method: 'POST', body: JSON.stringify(body) })
 }
 
-// ========== 员工 CRUD ==========
 export function getEmployees() {
   return request('/employee', { method: 'GET' })
 }

@@ -112,6 +112,8 @@ Content-Type: application/json
 
 ### 文件：`vue-frontend/src/views/Register.vue`
 
+**这个文件在前端的作用**：`Register.vue` 是注册页面，负责收集新员工的所有字段，调用 `register()` 发送注册请求；成功后显示提示。它对应后端 `@app.post('/register')` 的前端入口。
+
 ```vue
 <template>
   <div class="form-page">
@@ -186,7 +188,6 @@ async function handleRegister() {
   error.value = ''
   success.value = ''
 
-  // 构造请求体：字符串 → 数字类型转换
   const body = {
     emp_id: Number(form.emp_id),
     emp_name: form.emp_name,
@@ -204,7 +205,6 @@ async function handleRegister() {
 
   if (res.success) {
     success.value = `注册成功！员工 ${res.data.emp_name} (ID: ${res.data.emp_id})`
-    // 清空表单
     Object.keys(form).forEach((k) => (form[k] = ''))
   } else {
     error.value = res.message

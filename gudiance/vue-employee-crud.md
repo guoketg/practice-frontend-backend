@@ -168,6 +168,9 @@ Authorization: Bearer <token>
 
 ## 四、前端代码
 
+> 📘 逐行讲解见专题文档 **[vue-employee-list-explained.md](./vue-employee-list-explained.md)**——
+> 用后端类比的方式解释每个 Vue 概念（`ref()`、`v-for`、`v-if`、`v-model`、`@click`、`onMounted` 等）。
+
 ### 文件：`vue-frontend/src/views/Employees.vue`
 
 ```vue
@@ -262,7 +265,6 @@ const loading = ref(true)
 async function fetchEmployees() {
   loading.value = true
   const res = await getEmployees()
-  // getEmployees 返回的是数组（不是 ApiResponse 格式）
   if (Array.isArray(res)) {
     employees.value = res
   }
@@ -301,7 +303,6 @@ async function handleUpdate() {
   editError.value = ''
 
   const empId = editForm.value.emp_id
-  // 只发送有值的字段（exclude_unset 语义）
   const body = {}
   for (const key of ['emp_name', 'gender', 'age', 'department', 'dept_id', 'salary', 'hire_date']) {
     if (editForm.value[key] !== '' && editForm.value[key] !== undefined) {
@@ -318,7 +319,7 @@ async function handleUpdate() {
 
   if (res.success) {
     closeEdit()
-    await fetchEmployees() // 刷新列表
+    await fetchEmployees()
   } else {
     editError.value = res.message
   }
@@ -330,7 +331,7 @@ async function handleDelete(empId) {
 
   const res = await deleteEmployee(empId)
   if (res.success) {
-    await fetchEmployees() // 刷新列表
+    await fetchEmployees()
   } else {
     alert('删除失败：' + res.message)
   }
@@ -341,6 +342,9 @@ async function handleDelete(empId) {
 ---
 
 ## 五、前后端数据流对接
+
+> 📘 全链路详解（API 封装、Token 认证、路由守卫、Vite 代理、踩坑点）见专题文档
+> **[vue-employee-dataflow-explained.md](./vue-employee-dataflow-explained.md)**。
 
 ### 列表加载流程
 
@@ -422,11 +426,11 @@ handleDelete(empId)
 |------|------|------|
 | 列表加载 | `onMounted` → `fetchEmployees()` | 页面挂载时自动加载 |
 | Token 注入 | `src/api/index.js` `request()` | PUT/DELETE 自动带 `Authorization: Bearer` |
-| 编辑只发有值字段 | `handleUpdate()` 第 585-591 行 | 对应后端 `exclude_unset=True` |
-| 类型转换 | `handleUpdate()` 第 587-589 行 | age/dept_id→Number, salary→Number |
+| 编辑只发有值字段 | `handleUpdate()` | 对应后端 `exclude_unset=True` |
+| 类型转换 | `handleUpdate()` | age/dept_id→Number, salary→Number |
 | 删除确认 | `handleDelete()` | `confirm()` 二次确认防止误删 |
 | 列表刷新 | `fetchEmployees()` | 编辑/删除成功后重新加载 |
-| GET 返回数组 | `fetchEmployees()` 第 546 行 | 注意不是 `ApiResponse` 格式，用 `Array.isArray()` 判断 |
+| GET 返回数组 | `fetchEmployees()` | 注意不是 `ApiResponse` 格式，用 `Array.isArray()` 判断 |
 
 ---
 

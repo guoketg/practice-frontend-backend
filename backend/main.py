@@ -159,7 +159,7 @@ async def register(body:RegisterRequest):
 
 #防止员工信息被修改
 @app.put(path='/employee/{emp_id}',response_model=ApiResponse)
-async def update_employee(body:EmployeeUpdate,emp_id: int=Depends(get_current_emp)):
+async def update_employee(body:EmployeeUpdate,current_emp_id: int=Depends(get_current_emp)):
     async with AsyncSessionLocal() as session:
         result=await session.execute(select(Employee).where(Employee.emp_id==emp_id))
         employee=result.scalar_one_or_none()
@@ -225,6 +225,25 @@ async def update_attendance(att_id:int,body:AttendanceUpdate):
             'work_hours':attendance.work_hours,
             'status':attendance.status
         })
+
+@app.delete('employee/{emp_id}')
+async def delete_employee(emp_id:int,_:int=Depends(get_current_emp)):
+    async with AsyncSessionLocal() as session:
+        result=await session.execute(select(Employee).where(Employee.emp_id==emp_id))
+        employee=result.scalar_one_or_none()
+
+        if not employee:
+            return ApiResponse(success=False,message='emp_id不存在')
+        
+        await session.delete(employee)
+        await session.commit()
+
+        return ApiResponse(success=True,message='删除员工成功',data={
+            'emp_id':emp_id
+        })
+
+
+    
 
 if __name__ == "__main__":
     import uvicorn

@@ -92,6 +92,8 @@ Content-Type: application/json
 
 ### 文件：`vue-frontend/src/views/Login.vue`
 
+**这个文件在前端的作用**：`Login.vue` 是登录页面，负责收集用户输入的 `emp_id` 和密码，调用 `login()` 发送登录请求；成功后把后端返回的 `token` 和用户名存入 `localStorage`，再跳转到员工管理页。它是后端 `@app.post('/login')` 的前端入口。
+
 ```vue
 <template>
   <div class="form-page">
@@ -137,10 +139,8 @@ async function handleLogin() {
   loading.value = false
 
   if (res.success) {
-    // 登录成功：存储 token + 用户名到 localStorage
     localStorage.setItem('token', res.data.token)
     localStorage.setItem('userName', res.data.emp_name)
-    // 跳转到员工管理页
     router.push('/employees')
   } else {
     error.value = res.message
